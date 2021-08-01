@@ -17,9 +17,10 @@ def create_dir(path):
 
 def load_data(path):
 
-    """ X=images and Y= masks"""
+    """ X = images and Y = masks"""
+
     train_X = sorted(glob(os.path.join(path,"training","images","*.tif")))
-    
+   
     train_Y = sorted(glob(os.path.join(path,"training","1st_manual","*.gif")))
 
     test_x = sorted(glob(os.path.join(path,"test","images","*.tif")))
@@ -100,11 +101,17 @@ def augment_data(images,masks,save_path,augment=False):
             
             
             image_path = os.path.join(save_path,"images",tmp_image_name)
+            test_or_train = str(image_path.split("/")[1])
+            
+            
             mask_path = os.path.join(save_path,"mask",tmp_mask_name)
-            
-            cv2.imwrite(f"newdata/train/images/{tmp_image_name}",i)
-            
-            cv2.imwrite(f"newdata/train/mask/{tmp_mask_name}",m)
+            if test_or_train == "test":
+                cv2.imwrite(f"newdata/{test_or_train}/images/{tmp_image_name}",i)
+                cv2.imwrite(f"newdata/{test_or_train}/mask/{tmp_mask_name}",m)
+            elif test_or_train == "train" :
+                cv2.imwrite(f"newdata/{test_or_train}/images/{tmp_image_name}",i)
+                cv2.imwrite(f"newdata/{test_or_train}/mask/{tmp_mask_name}",m)
+                
             
             
             index += 1
@@ -125,5 +132,8 @@ if __name__ == "__main__":
     create_dir("newdata/test/images")
     create_dir("newdata/test/mask")
 
-    augment_data(train_X,train_Y,"new_data/train/",augment=True)
+    
+    augment_data(test_x, test_y, f"new_data/test/", augment=False)
+    augment_data(train_X,train_Y,f"new_data/train/",augment=True)
+    
 
